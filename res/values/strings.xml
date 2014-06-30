@@ -8,5 +8,7 @@
     <string name="emailInputHint">Tapez votre Email</string>
     <string name="passwordInputHint">Tapez votre mot de passe</string>
     <string name="sendButtonText">Envoyez</string>
+    <string name="loginSuccessMessage">Success d\'authentification</string>
+    <string name="loginFailureMessage">Echec d\'authentification</string>
 
 </resources>
