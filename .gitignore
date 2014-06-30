@@ -1,0 +1,8 @@
+.metadata
+.directory
+
+/UserManagement-Project/.DS_Store
+/UserManagement-Project/bin
+/UserManagement-Project/bin/*
+/UserManagement-Project/gen/*
+/UserManagement-Project/.settings/*
