@@ -8,13 +8,15 @@
         android:minSdkVersion="8"
         android:targetSdkVersion="19" />
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Black" >
         <activity
-            android:name="com.formation.usermanagement.MainActivity"
+            android:name="com.formation.usermanagement.activity.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,8 +25,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.formation.usermanagement.SecondActivity"
+            android:name="com.formation.usermanagement.activity.SecondActivity"
             android:label="Second Activity" />
+        <activity
+            android:name="com.formation.usermanagement.activity.ThirdActivity"
+            android:label="Third Activity" />
+
+        <receiver android:name="com.formation.usermanagement.receiver.BootReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+
+                <category android:name="android.intent.category.HOME" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
