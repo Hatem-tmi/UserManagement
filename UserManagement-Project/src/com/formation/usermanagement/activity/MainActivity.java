@@ -1,12 +1,5 @@
 package com.formation.usermanagement.activity;
 
-import com.formation.usermanagement.R;
-import com.formation.usermanagement.R.color;
-import com.formation.usermanagement.R.id;
-import com.formation.usermanagement.R.layout;
-import com.formation.usermanagement.R.string;
-import com.formation.usermanagement.model.User;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +10,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.formation.usermanagement.R;
+import com.formation.usermanagement.model.User;
+import com.formation.usermanagement.util.Utils;
 
 public class MainActivity extends Activity {
 	private static final String TAG = MainActivity.class.getSimpleName();
@@ -33,66 +30,91 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		Log.d(TAG, "onCreate");
 
-		setContentView(R.layout.activity_main);
+		// Check if user is logged in
+		boolean isUserLoggedIn = Utils.isUserLoggedIn(getApplicationContext());
+		if (isUserLoggedIn == true) {
+			// user is logged in
 
-		emailEditText = (EditText) findViewById(R.id.emailEditText);
-		passwordEditText = (EditText) findViewById(R.id.passwordEditText);
-		sendButton = (Button) findViewById(R.id.sendButton);
-		infoTextView = (TextView) findViewById(R.id.infoTextView);
+			// load user data from sharedPrefs
+			User user = Utils.loadUserData(getApplicationContext());
 
-		sendButton.setOnClickListener(new OnClickListener() {
+			// Go to SecondActivity
+			goToSecondActivity(user);
 
-			@Override
-			public void onClick(View v) {
-				Log.d(TAG, "sendButton onClick");
+		} else {
+			// user is logged out
 
-				String email = emailEditText.getText().toString();
-				String pwd = passwordEditText.getText().toString();
+			setContentView(R.layout.activity_main);
 
-				String txt = null;
-				if (email.equals(SUCCESS_EMAIL) && pwd.equals(SUCCESS_PWD)) {
-					Log.i(TAG, "Authentification success");
+			emailEditText = (EditText) findViewById(R.id.emailEditText);
+			passwordEditText = (EditText) findViewById(R.id.passwordEditText);
+			sendButton = (Button) findViewById(R.id.sendButton);
+			infoTextView = (TextView) findViewById(R.id.infoTextView);
 
-					// affichage du message de success
-					infoTextView
-							.setText(getString(R.string.loginSuccessMessage));
-					infoTextView.setTextColor(getResources().getColor(
-							R.color.colorSuccess));
+			sendButton.setOnClickListener(new OnClickListener() {
 
-					txt = String.format(
-							"Votre email=%s - Votre mot de passe=%s", email,
-							pwd);
+				@Override
+				public void onClick(View v) {
+					Log.d(TAG, "sendButton onClick");
 
-					// Création de l'objet user
-					User user = new User();
-					user.setNom("Nom_user1");
-					user.setPrenom("Prenom_user1");
-					user.setAge(20);
-					user.setEmail(SUCCESS_EMAIL);
-					user.setPassword(SUCCESS_PWD);
+					String email = emailEditText.getText().toString();
+					String pwd = passwordEditText.getText().toString();
 
-					// Go to SecondActivity
-					Intent intent = new Intent(MainActivity.this,
-							SecondActivity.class);
-					intent.putExtra("USER", user);
-					startActivity(intent);
+					String txt = null;
+					if (email.equals(SUCCESS_EMAIL) && pwd.equals(SUCCESS_PWD)) {
+						Log.i(TAG, "Authentification success");
 
-					finish();
-				} else {
-					Log.i(TAG, "Authentification failure");
+						// affichage du message de success
+						infoTextView
+								.setText(getString(R.string.loginSuccessMessage));
+						infoTextView.setTextColor(getResources().getColor(
+								R.color.colorSuccess));
 
-					// affichage du message de failure
-					infoTextView
-							.setText(getString(R.string.loginFailureMessage));
-					infoTextView.setTextColor(getResources().getColor(
-							R.color.colorFailure));
+						txt = String.format(
+								"Votre email=%s - Votre mot de passe=%s",
+								email, pwd);
 
-					txt = "Echec d'authentification";
+						// Set user logged-in in sharedPrefs
+						Utils.setUserLoggedIn(getApplicationContext());
+
+						// Création de l'objet user
+						User user = new User();
+						user.setNom("Nom_user1");
+						user.setPrenom("Prenom_user1");
+						user.setAge(20);
+						user.setEmail(SUCCESS_EMAIL);
+						user.setPassword(SUCCESS_PWD);
+
+						// Save user data in sharedPrefs
+						Utils.saveUserData(getApplicationContext(), user);
+
+						// Go to SecondActivity
+						goToSecondActivity(user);
+					} else {
+						Log.i(TAG, "Authentification failure");
+
+						// affichage du message de failure
+						infoTextView
+								.setText(getString(R.string.loginFailureMessage));
+						infoTextView.setTextColor(getResources().getColor(
+								R.color.colorFailure));
+
+						txt = "Echec d'authentification";
+					}
+
+					Toast.makeText(getApplicationContext(), txt,
+							Toast.LENGTH_LONG).show();
 				}
+			});
+		}
+	}
 
-				Toast.makeText(getApplicationContext(), txt, Toast.LENGTH_LONG)
-						.show();
-			}
-		});
+	private void goToSecondActivity(User user) {
+
+		Intent intent = new Intent(MainActivity.this, SecondActivity.class);
+		intent.putExtra("USER", user);
+		startActivity(intent);
+
+		finish();
 	}
 }

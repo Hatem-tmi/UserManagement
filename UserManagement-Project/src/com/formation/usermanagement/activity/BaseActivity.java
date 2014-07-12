@@ -6,7 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
+
+import com.formation.usermanagement.util.Utils;
 
 /**
  * BaseActivity used to manage kill intents sent after logout-button click
@@ -44,11 +45,17 @@ public class BaseActivity extends Activity {
 	}
 
 	/**
-	 * Broadcast Kill intent
+	 * Broadcast Kill intent - user logged out
 	 */
 	protected void broadcastKillIntent() {
 		Intent intent = new Intent();
 		intent.setAction(KILL_ACTION);
 		sendBroadcast(intent);
+
+		// remove user logged-in flag from sharedPrefs
+		Utils.removeUserLoggedInFlag(getApplicationContext());
+
+		// remove user from sharedPrefs
+		Utils.removeUserData(getApplicationContext());
 	}
 }
